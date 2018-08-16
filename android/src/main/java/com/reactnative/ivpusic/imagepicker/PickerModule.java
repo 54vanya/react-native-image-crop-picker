@@ -70,6 +70,8 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
     private boolean includeBase64 = false;
     private boolean includeExif = false;
     private boolean cropping = false;
+    private int croppingAspectRatioHeight = 200;
+    private int croppingAspectRatioWidth = 200;
     private boolean cropperCircleOverlay = false;
     private boolean freeStyleCropEnabled = false;
     private boolean showCropGuidelines = true;
@@ -122,6 +124,8 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
         width = options.hasKey("width") ? options.getInt("width") : width;
         height = options.hasKey("height") ? options.getInt("height") : height;
         cropping = options.hasKey("cropping") ? options.getBoolean("cropping") : cropping;
+        croppingAspectRatioHeight = options.hasKey("croppingAspectRatioHeight") ? options.getInt("croppingAspectRatioHeight") : height;
+        croppingAspectRatioWidth = options.hasKey("croppingAspectRatioWidth") ? options.getInt("croppingAspectRatioWidth") : width;
         cropperActiveWidgetColor = options.hasKey("cropperActiveWidgetColor") ? options.getString("cropperActiveWidgetColor") : cropperActiveWidgetColor;
         cropperStatusBarColor = options.hasKey("cropperStatusBarColor") ? options.getString("cropperStatusBarColor") : cropperStatusBarColor;
         cropperToolbarColor = options.hasKey("cropperToolbarColor") ? options.getString("cropperToolbarColor") : cropperToolbarColor;
@@ -612,7 +616,7 @@ class PickerModule extends ReactContextBaseJavaModule implements ActivityEventLi
 
         UCrop.of(uri, Uri.fromFile(new File(this.getTmpDir(activity), UUID.randomUUID().toString() + ".jpg")))
                 .withMaxResultSize(width, height)
-                .withAspectRatio(width, height)
+                .withAspectRatio(croppingAspectRatioWidth, croppingAspectRatioHeight)
                 .withOptions(options)
                 .start(activity);
     }

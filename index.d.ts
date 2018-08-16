@@ -1,6 +1,8 @@
 declare module "react-native-image-crop-picker" {
     export interface Options {
         cropping?: boolean;
+        croppingAspectRatioHeight?: number;
+        croppingAspectRatioWidth?: number;
         width?: number;
         height?: number;
         multiple?: boolean;

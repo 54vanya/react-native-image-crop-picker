@@ -70,6 +70,8 @@ RCT_EXPORT_MODULE();
     if (self = [super init]) {
         self.defaultOptions = @{
                                 @"multiple": @NO,
+                                @"croppingAspectRatioHeight": @200.0F,
+                                @"croppingAspectRatioWidth": @200.0F,
                                 @"cropping": @NO,
                                 @"cropperCircleOverlay": @NO,
                                 @"writeTempFile": @YES,
@@ -752,12 +754,38 @@ RCT_EXPORT_METHOD(openCropper:(NSDictionary *)options
 // Returns a custom rect for the mask.
 - (CGRect)imageCropViewControllerCustomMaskRect:
 (RSKImageCropViewController *)controller {
-    CGSize maskSize = CGSizeMake(
-                                 [[self.options objectForKey:@"width"] intValue],
-                                 [[self.options objectForKey:@"height"] intValue]);
+
+    CGSize aspectRatio = CGSizeMake(
+                                    [[self.options objectForKey:@"croppingAspectRatioWidth"] intValue], 
+                                    [[self.options objectForKey:@"croppingAspectRatioHeight"] intValue]);
 
     CGFloat viewWidth = CGRectGetWidth(controller.view.frame);
     CGFloat viewHeight = CGRectGetHeight(controller.view.frame);
+    
+    CGFloat maskWidth;
+    if ([controller isPortraitInterfaceOrientation]) {
+        maskWidth = viewWidth;
+    } else {
+        maskWidth = viewHeight;
+    }
+    
+    CGFloat maskHeight;
+    do {
+        maskHeight = maskWidth * aspectRatio.height / aspectRatio.width;
+        maskWidth -= 1.0f;
+    } while (maskHeight != floor(maskHeight));
+    maskWidth += 1.0f;
+    
+    CGSize maskSize = CGSizeMake(maskWidth, maskHeight);
+
+    ////////////
+
+    // CGSize maskSize = CGSizeMake(
+    //                              [[self.options objectForKey:@"width"] intValue],
+    //                              [[self.options objectForKey:@"height"] intValue]);
+
+    // CGFloat viewWidth = CGRectGetWidth(controller.view.frame);
+    // CGFloat viewHeight = CGRectGetHeight(controller.view.frame);
 
     CGRect maskRect = CGRectMake((viewWidth - maskSize.width) * 0.5f,
                                  (viewHeight - maskSize.height) * 0.5f,
